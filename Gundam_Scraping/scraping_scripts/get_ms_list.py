@@ -1,50 +1,27 @@
+# import libraries and modules
 from requests import get
 from bs4 import BeautifulSoup
 
-
-def get_ms_list():
+def get_mw_list():
     """
-    Gets the list of all ms from a <table> on the Animal Crossing Fandom wiki
-    :return: A list of all villages, ["/wiki/Admiral", ...]
+    Gets the list of all Mobile Weapons from "smw-column"s on Gundam wiki
+    :return: A list of all Mobile Weapons, [..., "/wiki/Zuck", ...]
     """
-
-    # The URL of the Animal Crossing Wiki
-    wiki_url = "https://gundam.fandom.com/wiki/The_Gundam_Wiki/ms_list_(New_Horizons)"
-
-    # Get the page and parse it with BeautifulSoup
+    
+    # initialize url for mobile suit list, parse with BeautifulSoup
+    wiki_url = "https://gundam.fandom.com/wiki/Special:BrowseData/Mobile_Weapons?limit=3243&offset=0&_cat=Mobile_Weapons"
     response = get(wiki_url)
     soup_response = BeautifulSoup(response.text, 'html.parser')
 
-    # Try to locate the specific table containing all the ms
-    ms_table = []
-    found = False
+    # initialize list of links to individual ms' pages
+    mw_links = []
 
-    # NOTES:
-    # # Letter delineator: ' div class="smw-column-header" '
-    # # # Item delineator: ' ::marker '
-    # # # # MS Page link: ' "[/wiki/]...[" title=] '
-
-    # Check each table
-    for table in soup_response.find_all("table"):
-
-        # The head of the "ms" table has a link to a general "ms" page
-        for link in table.find_all("a"):
-            if "/wiki/ms" in link.get("href"):
-                ms_table = table
-                found = True
-                break
-        if found:
-            break
-
-    # Only add each link once
-    links = []
-    for tr in ms_table.find_all("tr"):
-
-        # The first column for each ms is uniquely bolded
-        for bolded in tr.find_all("b"):
-            for link in bolded.find_all("a"):
-                l = link.get("href")
-                if l not in links:
-                    links.append(l)
-
-    return links
+    # search in parsed html for appropriate links
+    for smwcols in soup_response.find_all(class_="smw-column"):
+        for link in smwcols.find_all("a"):
+            l = link.get("href")
+            if l not in mw_links:
+                mw_links.append(l)
+    
+    # store the links
+    return mw_links
