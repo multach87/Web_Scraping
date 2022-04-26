@@ -9,7 +9,7 @@ def get_mw_list():
     """
     
     # initialize url for mobile suit list, parse with BeautifulSoup
-    wiki_url = "https://gundam.fandom.com/wiki/Special:BrowseData/Mobile_Weapons?limit=3243&offset=0&_cat=Mobile_Weapons"
+    wiki_url = "https://gundam.fandom.com/wiki/Special:BrowseData/Mobile_Weapons?limit=10&offset=0&_cat=Mobile_Weapons"
     response = get(wiki_url)
     soup_response = BeautifulSoup(response.text, 'html.parser')
 
@@ -22,6 +22,19 @@ def get_mw_list():
             l = link.get("href")
             if l not in mw_links:
                 mw_links.append(l)
+    
+    # store the links
+    return mw_links
+"""for link in soup_response.find_all(class_="smw-column").find_all("a"):
+        l = link.get("href")
+        if l not in mw_links:
+            mw_links.append(l)
+    """
+
+mw_list = get_mw_list()
+
+print(len(mw_list))
+
 
 
 """Stuff below to verify proper operation"""
