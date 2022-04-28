@@ -1,3 +1,4 @@
+from tkinter.messagebox import NO
 import urllib
 import re
 
@@ -56,55 +57,50 @@ def get_mw_data(ms_name: str):
         img_capts.append(c)
     # # Zip captions and links into dictionary
     mw_data["imgs"] = dict(zip(img_capts, img_urls))
-    
 
+    # Clean and store the attribute data
+    # # initialize attribute keys and values
+    attrs_key = []
+    attrs_val = []
+    # # extract info from each attribute
+    for attribute in attributes:
+        # # # initialize values list for attributes with multiple values
+        attrs_val2 = []
 
-    
+        # # # store attribute name/key
+        key = attribute.find_all("h3")[0].getText()
 
-    # image_url = figures.find_all("a")[0].get("href")
-    # caption = figure.find_all("a")[0].get("title")
+        # # # for handling Overall Height in multiple measurement units
+        for value in attribute.find_all("li"):
+            if value.findChildren("span", {"class": "smwtext"}):
+                attrs_val2.append(value.findChildren("span", {"class": "smwtext"})[0].getText())
+            else:
+                attrs_val2.append(value.getText())
+        
+        
+        value = attribute.find_all("div")[0]
+
+        attrs_key.append(key)
+        attrs_val.append(attrs_val2)
     
-    # urllib.request.urlretrieve(image_url)
-    # if len(caption) > 0:
-    #    mw_data["caption"] = caption[0].getText()
+    mw_data["attributes"] = dict(zip(attrs_key, attrs_val))
+
+    for dicts in mw_data["attributes"]:
+        if (' Height' in dicts) or (' Weight' in dicts):
+            mw_data["attributes"][dicts] = mw_data["attributes"][dicts][0].split(" ", 1)
+            mw_data["attributes"][dicts][0] = float(mw_data["attributes"][dicts][0])
+
+    # print(mw_data["attributes"])
 
     return mw_data
 
 mw_data0 = get_mw_data(mw_list[12])
 
-print(mw_data0)
+# print("\n".join(mw_data0))
 
-"""
-figure = aside.find_all("figure", {"class": "pi-item pi-image"})[0]
-    attributes = aside.find_all("div", {"class": "pi-item pi-data pi-item-spacing pi-border-color"})
-"""
+print(mw_data0["attributes"])
 
-"""
-# 
 
-    # Clean and store the attribute data
-    for attribute in attributes:
-
-        key = attribute.find_all("h3")[0].getText()
-        value = attribute.find_all("div")[0]
-
-        if key == "Birthday":
-            values = [v.getText() for v in value.find_all("a", recursive=False)]
-        elif key == "Initial phrase":
-            values = value.find(text=True, recursive=False).strip()
-        elif key == "Initial clothes":
-            values = [element.strip() for element in value.getText().split(")")]
-            for index in range(len(values)):
-                if "(" in values[index]:
-                    values[index] = values[index] + ")"
-            values = [element for element in values if element]
-        else:
-            values = value.getText()
-            if "," in values:
-                values = [v.strip() for v in values.split(",")]
-
-        mw_data[key.lower()] = values
-        """
 
 
 """
@@ -135,3 +131,30 @@ for link in figures.find_all("a"):
 
 """mw_data["figs_url"] = figs_url
 mw_data["figs_capt"] = figs_capt"""
+
+"""
+# 
+
+    # Clean and store the attribute data
+    for attribute in attributes:
+
+        key = attribute.find_all("h3")[0].getText()
+        value = attribute.find_all("div")[0]
+
+        if key == "Birthday":
+            values = [v.getText() for v in value.find_all("a", recursive=False)]
+        elif key == "Initial phrase":
+            values = value.find(text=True, recursive=False).strip()
+        elif key == "Initial clothes":
+            values = [element.strip() for element in value.getText().split(")")]
+            for index in range(len(values)):
+                if "(" in values[index]:
+                    values[index] = values[index] + ")"
+            values = [element for element in values if element]
+        else:
+            values = value.getText()
+            if "," in values:
+                values = [v.strip() for v in values.split(",")]
+
+        mw_data[key.lower()] = values
+        """
