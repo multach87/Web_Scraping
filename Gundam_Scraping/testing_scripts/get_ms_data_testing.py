@@ -59,6 +59,8 @@ def get_mw_data(ms_name: str):
     mw_data["imgs"] = dict(zip(img_capts, img_urls))
 
     # Clean and store the attribute data
+    # # List of measurement words (used later)
+    measures = ['Height', 'Weight', 'Power Output', 'Sensor Range', 'Acceleration', 'Speed']
     # # initialize attribute keys and values
     attrs_key = []
     attrs_val = []
@@ -77,16 +79,17 @@ def get_mw_data(ms_name: str):
             else:
                 attrs_val2.append(value.getText())
         
-        
+        # # # store attribute value
         value = attribute.find_all("div")[0]
-
+        
+        # # # update keys and values
         attrs_key.append(key)
         attrs_val.append(attrs_val2)
-    
+    # # zip together attribute key and value into dictionary
     mw_data["attributes"] = dict(zip(attrs_key, attrs_val))
-
+    # # Separate measurements from units
     for dicts in mw_data["attributes"]:
-        if (' Height' in dicts) or (' Weight' in dicts):
+        if any(ele in dicts for ele in measures):
             mw_data["attributes"][dicts] = mw_data["attributes"][dicts][0].split(" ", 1)
             mw_data["attributes"][dicts][0] = float(mw_data["attributes"][dicts][0])
 
