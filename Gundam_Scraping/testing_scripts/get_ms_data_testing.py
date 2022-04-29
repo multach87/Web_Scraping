@@ -120,11 +120,29 @@ def get_mw_data(ms_name: str):
             attrs_val.append(attrs_val2)
         # # zip together attribute key and value into dictionary
     mw_data = dict(zip(attrs_key, attrs_val))
-    # # Separate measurements from units
+    # # Separate measurements from units, armament numbers from armament
     for dicts in mw_data:
         if any(ele in dicts for ele in measures):
+            """units = []
+            nums = []"""
             mw_data[dicts] = mw_data[dicts][0].split(" ", 1)
             mw_data[dicts][0] = float(mw_data[dicts][0])
+        if 'Armament' in dicts:
+            arms = []
+            nums = []
+            for arm in mw_data[dicts]:
+                if ' x ' in arm:
+                    arms.append(arm.split(" x ", 1)[1])
+                    nums.append(float(arm.split(" x ", 1)[0]))
+                else:
+                    arms.append(arm)
+                    nums.append(1)
+            mw_data[dicts] = [nums, arms]
+
+    """if ' x ' in mw_data[dicts]:
+                mw_data[dicts] = mw_data[dicts].split(" x ", 1)
+            else:
+                mw_data[dicts] = ['1', mw_data[dicts]]"""
 
     # print(mw_data)
 
