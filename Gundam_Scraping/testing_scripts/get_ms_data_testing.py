@@ -79,22 +79,30 @@ def get_mw_data(ms_name: str):
 
     # Clean and store the attribute data
     # # List of measurement words (used later)
-    measures = ['Height', 'Weight', 'Power Output', \
-        'Sensor Range', 'Acceleration', 'Speed']
+    measures = ['Height', 'Weight', 'PowerOutput', \
+        'SensorRange', 'Acceleration', 'Speed']
     """    # # initialize attribute keys and values
         attrs_key = []
         attrs_val = []"""
     
     # # extract info from each attribute
-    for section in aside.findAll(["section", {"class": "pi-item pi-group pi-border-color"}, \
-        "section", {"class": "pi-item pi-group pi-border-color pi-collapse pi-collapse-closed"}])[1:]:
-        for attribute in section.find_all("div", {"class": \
+    for sections in aside.findAll(["section", \
+        {"class": "pi-item pi-group pi-border-color"}, \
+        "section", \
+            {"class": "pi-item pi-group pi-border-color pi-collapse pi-collapse-closed"}])[1:]:
+        h2 = sections.findAll("h2", {"class": \
+            "pi-item pi-header pi-secondary-font pi-item-spacing pi-secondary-background"})[0].getText()
+        for attribute in sections.find_all("div", {"class": \
             "pi-item pi-data pi-item-spacing pi-border-color"}):
             # # # initialize values list for attributes with multiple values
             attrs_val2 = []
 
             # # # store attribute name/key
+            """key = print(''.join(h2.split(" ")) + "_" + \
+                ''.join(attribute.find_all("h3")[0].getText().split(" ")))"""
             key = ''.join(attribute.find_all("h3")[0].getText().split(" "))
+            key2 = ''.join(h2.split(" ")) + "_" + \
+                ''.join(attribute.find_all("h3")[0].getText().split(" "))
 
             # # # for handling Overall Height in multiple measurement units
             for value in attribute.find_all("li"):
@@ -108,7 +116,7 @@ def get_mw_data(ms_name: str):
             value = attribute.find_all("div")[0]
             
             # # # update keys and values
-            attrs_key.append(key)
+            attrs_key.append(key2)
             attrs_val.append(attrs_val2)
         # # zip together attribute key and value into dictionary
     mw_data = dict(zip(attrs_key, attrs_val))
