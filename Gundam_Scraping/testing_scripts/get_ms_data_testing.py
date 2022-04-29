@@ -103,14 +103,14 @@ def get_mw_data(ms_name: str):
         attrs_key.append(key)
         attrs_val.append(attrs_val2)
     # # zip together attribute key and value into dictionary
-    mw_data["attributes"] = dict(zip(attrs_key, attrs_val))
+    mw_data = dict(zip(attrs_key, attrs_val))
     # # Separate measurements from units
-    for dicts in mw_data["attributes"]:
+    for dicts in mw_data:
         if any(ele in dicts for ele in measures):
-            mw_data["attributes"][dicts] = mw_data["attributes"][dicts][0].split(" ", 1)
-            mw_data["attributes"][dicts][0] = float(mw_data["attributes"][dicts][0])
+            mw_data[dicts] = mw_data[dicts][0].split(" ", 1)
+            mw_data[dicts][0] = float(mw_data[dicts][0])
 
-    # print(mw_data["attributes"])
+    # print(mw_data)
 
     return mw_data
 
