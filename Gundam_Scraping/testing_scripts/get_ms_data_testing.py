@@ -29,6 +29,10 @@ def get_mw_data(ms_name: str):
     # The "aside" is an HTML element containing all the important ms information
     aside = soup_response.findAll("aside")[0]
 
+    # initialize attribute keys and values
+    attrs_key = []
+    attrs_val = []
+
     # Get all the data for this ms
     names = aside.find_all("h2", {"class": "pi-item pi-item-spacing pi-title pi-secondary-background"})
     types = aside.find_all("td")
@@ -36,34 +40,47 @@ def get_mw_data(ms_name: str):
 
     # Clean and store name
     cleaned_names = [name.getText() for name in names]
-    mw_data["name_en"] = cleaned_names[0]
+    # mw_data["name_en"] = cleaned_names[0]
+    attrs_valname = []
+    attrs_key.append("names")
+    attrs_valname.append(cleaned_names[0])
     if(len(cleaned_names) > 1):
-        mw_data["name_jp"] = cleaned_names[1].split(" (")[1].split(")")[0]
+        # mw_data["name_jp"] = cleaned_names[1].split(" (")[1].split(")")[0]
+        # attrs_key.append("name_jp")
+        attrs_valname.append(cleaned_names[1].split(" (")[1].split(")")[0])
+    attrs_val.append(attrs_valname)
     
     # Clean and store type
     cleaned_type = [type.getText() for type in types]
-    mw_data["type_main"] = cleaned_type[0].split(" ")[-2] + " " + cleaned_type[0].split(" ")[-1]
-    mw_data["type_extra"] = ' '.join(cleaned_type[0].split(" ")[:-2]).split("\t\t\t\t")[1]
+    attrs_valtype = []
+    # mw_data["type_main"] = cleaned_type[0].split(" ")[-2] + " " + cleaned_type[0].split(" ")[-1]
+    attrs_key.append("type")
+    attrs_valtype.append(cleaned_type[0].split(" ")[-2] + " " + cleaned_type[0].split(" ")[-1])
+    # mw_data["type_extra"] = ' '.join(cleaned_type[0].split(" ")[:-2]).split("\t\t\t\t")[1]
+    attrs_valtype.append(' '.join(cleaned_type[0].split(" ")[:-2]).split("\t\t\t\t")[1])
+    attrs_val.append(attrs_valtype)
 
     # Locate and store image urls, captions
     # # Initialize lists
-    img_urls = []
-    img_capts = []
+    img_vals = []
     # # Append each link, caption to list
     for link in aside.find_all("a", {"class": "image image-thumbnail"}):
         l = link.get("href")
         c = link.get("title")
-        img_urls.append(l)
-        img_capts.append(c)
+        img_vals.append(c)
+        img_vals.append(l)
     # # Zip captions and links into dictionary
-    mw_data["imgs"] = dict(zip(img_capts, img_urls))
+    # mw_data["imgs"] = dict(zip(img_capts, img_urls))
+    attrs_key.append("imgs")
+    attrs_val.append(img_vals)
 
     # Clean and store the attribute data
     # # List of measurement words (used later)
     measures = ['Height', 'Weight', 'Power Output', 'Sensor Range', 'Acceleration', 'Speed']
-    # # initialize attribute keys and values
-    attrs_key = []
-    attrs_val = []
+    """    # # initialize attribute keys and values
+        attrs_key = []
+        attrs_val = []"""
+    
     # # extract info from each attribute
     for attribute in attributes:
         # # # initialize values list for attributes with multiple values
@@ -101,7 +118,7 @@ mw_data0 = get_mw_data(mw_list[12])
 
 # print("\n".join(mw_data0))
 
-print(mw_data0["attributes"])
+print(mw_data0)
 
 
 
