@@ -34,9 +34,11 @@ def get_mw_data(ms_name: str):
     attrs_val = []
 
     # Get all the data for this ms
-    names = aside.find_all("h2", {"class": "pi-item pi-item-spacing pi-title pi-secondary-background"})
+    names = aside.find_all("h2", {"class": \
+        "pi-item pi-item-spacing pi-title pi-secondary-background"})
     types = aside.find_all("td")
-    attributes = aside.find_all("div", {"class": "pi-item pi-data pi-item-spacing pi-border-color"})
+    """attributes = aside.find_all("div", {"class": \
+        "pi-item pi-data pi-item-spacing pi-border-color"})"""
 
     # Clean and store name
     cleaned_names = [name.getText() for name in names]
@@ -64,7 +66,8 @@ def get_mw_data(ms_name: str):
     # # Initialize lists
     img_vals = []
     # # Append each link, caption to list
-    for link in aside.find_all("a", {"class": "image image-thumbnail"}):
+    for link in aside.find_all("a", {"class": \
+        "image image-thumbnail"}):
         l = link.get("href")
         c = link.get("title")
         img_vals.append(c)
@@ -76,33 +79,38 @@ def get_mw_data(ms_name: str):
 
     # Clean and store the attribute data
     # # List of measurement words (used later)
-    measures = ['Height', 'Weight', 'Power Output', 'Sensor Range', 'Acceleration', 'Speed']
+    measures = ['Height', 'Weight', 'Power Output', \
+        'Sensor Range', 'Acceleration', 'Speed']
     """    # # initialize attribute keys and values
         attrs_key = []
         attrs_val = []"""
     
     # # extract info from each attribute
-    for attribute in attributes:
-        # # # initialize values list for attributes with multiple values
-        attrs_val2 = []
+    for section in aside.findAll(["section", {"class": "pi-item pi-group pi-border-color"}, \
+        "section", {"class": "pi-item pi-group pi-border-color pi-collapse pi-collapse-closed"}])[1:]:
+        for attribute in section.find_all("div", {"class": \
+            "pi-item pi-data pi-item-spacing pi-border-color"}):
+            # # # initialize values list for attributes with multiple values
+            attrs_val2 = []
 
-        # # # store attribute name/key
-        key = attribute.find_all("h3")[0].getText()
+            # # # store attribute name/key
+            key = ''.join(attribute.find_all("h3")[0].getText().split(" "))
 
-        # # # for handling Overall Height in multiple measurement units
-        for value in attribute.find_all("li"):
-            if value.findChildren("span", {"class": "smwtext"}):
-                attrs_val2.append(value.findChildren("span", {"class": "smwtext"})[0].getText())
-            else:
-                attrs_val2.append(value.getText())
-        
-        # # # store attribute value
-        value = attribute.find_all("div")[0]
-        
-        # # # update keys and values
-        attrs_key.append(key)
-        attrs_val.append(attrs_val2)
-    # # zip together attribute key and value into dictionary
+            # # # for handling Overall Height in multiple measurement units
+            for value in attribute.find_all("li"):
+                if value.findChildren("span", {"class": "smwtext"}):
+                    attrs_val2.append(value.findChildren("span", {"class": \
+                        "smwtext"})[0].getText())
+                else:
+                    attrs_val2.append(value.getText())
+            
+            # # # store attribute value
+            value = attribute.find_all("div")[0]
+            
+            # # # update keys and values
+            attrs_key.append(key)
+            attrs_val.append(attrs_val2)
+        # # zip together attribute key and value into dictionary
     mw_data = dict(zip(attrs_key, attrs_val))
     # # Separate measurements from units
     for dicts in mw_data:
