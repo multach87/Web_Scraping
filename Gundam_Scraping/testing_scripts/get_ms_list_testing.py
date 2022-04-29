@@ -9,7 +9,7 @@ def get_mw_list():
     """
     
     # initialize url for mobile suit list, parse with BeautifulSoup
-    wiki_url = "https://gundam.fandom.com/wiki/Special:BrowseData/Mobile_Weapons?limit=20&offset=0&_cat=Mobile_Weapons"
+    wiki_url = "https://gundam.fandom.com/wiki/Special:BrowseData/Mobile_Weapons?limit=20&offset=1039&_cat=Mobile_Weapons"
     response = get(wiki_url)
     soup_response = BeautifulSoup(response.text, 'html.parser')
 
