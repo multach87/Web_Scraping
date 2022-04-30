@@ -127,8 +127,23 @@ def get_mw_data(ms_name: str):
                     attrs_val2.append(value.findChildren("span", {"class": \
                         "smwtext"})[0].getText().lower())
                 else:
-                    attrs_val2.append(value.getText().lower())
+                    if value.find_all("span", {"class": "plainlinks"}):
+                        # val2_temp = ' '.join(value.getText().rsplit(' ', 1)[:-1])
+                        val2_temp = value.getText()
+                        # attrs_val2.append(' '.join(val2_temp.split('\u200e')[:-1]))
+                        # if len()
+                        if len(val2_temp.split('\u200e ')) == 2:
+                            attrs_val2.append(' '.join(val2_temp.split('\u200e')[:-1]).lower())
+                        else:
+                            attrs_val2.append(' '.join(value.getText().rsplit(' ', 1)[:-1]).lower())
+                    else:
+                        attrs_val2.append(value.getText().lower())
                     # attrs_val2 = [''.join(value.getText().split())]
+                """for i in test:
+                    if len(i.split('\u200e ')) == 2:
+                        new.append(' '.join(i.split('\u200e')[:-1]).lower())
+                    else:
+                        new.append(' '.join(i.split(' ')[:-1]).lower())"""
             
             # # # # store attribute value
             value = attribute.find_all("div")[0]
@@ -142,8 +157,8 @@ def get_mw_data(ms_name: str):
     
     # Clean measurements and armament numbers
     # # List of measurement words (used later)
-    measures = ['Height', 'Weight', 'PowerOutput', \
-        'SensorRange', 'Acceleration', 'Speed']
+    measures = ['Height', 'Weight', 'Output', \
+        'Length', 'Width', 'Range', 'Acceleration', 'Speed']
     # # Separate measurements from units, armament numbers from armament
     for dicts in mw_data:
         # # # Separate measurements from untis
