@@ -79,20 +79,22 @@ def get_mw_data(ms_name: str):
     attrs_val.append(attrs_valtype)
 
     # Clean and store image urls, image captions
-    # # Add "imgs" to keys list
-    attrs_key.append("imgs")
-    # # Initialize lists of captions and urls
-    img_urls = []
-    img_capts = []
-    # # Append each link, caption to list
-    for link in aside.find_all("a", {"class": \
+    if aside.find_all("a", {"class": \
         "image image-thumbnail"}):
-        l = link.get("href")
-        c = link.get("title")
-        img_urls.append(l)
-        img_capts.append(c)
-    # # Add list of image urls and list of cpations to values list
-    attrs_val.append([img_urls, img_capts])
+        # # Add "imgs" to keys list
+        attrs_key.append("imgs")
+        # # Initialize lists of captions and urls
+        img_urls = []
+        img_capts = []
+        # # Append each link, caption to list
+        for link in aside.find_all("a", {"class": \
+            "image image-thumbnail"}):
+            l = link.get("href")
+            c = link.get("title")
+            img_urls.append(l)
+            img_capts.append(c)
+        # # Add list of image urls and list of cpations to values list
+        attrs_val.append([img_urls, img_capts])
 
     # Clean and store the attribute data
     # # Loop over all mw attribute sections except first \
@@ -119,19 +121,14 @@ def get_mw_data(ms_name: str):
                 ''.join(attribute.find_all("h3")[0].getText().split(" "))
 
             # # # # for handling Overall Height in multiple measurement units
+            # # # # # AND trailing spaces/"\u200e" 's
             for value in attribute.find_all("li"):
-                """if value.find_all("span", {"class": "plainlinks"}):
-                    attrs_val2 = [''.join(value.getText().split())]"""
-                
                 if value.findChildren("span", {"class": "smwtext"}):
                     attrs_val2.append(value.findChildren("span", {"class": \
                         "smwtext"})[0].getText().lower())
                 else:
                     if value.find_all("span", {"class": "plainlinks"}):
-                        # val2_temp = ' '.join(value.getText().rsplit(' ', 1)[:-1])
                         val2_temp = value.getText()
-                        # attrs_val2.append(' '.join(val2_temp.split('\u200e')[:-1]))
-                        # if len()
                         if len(val2_temp.split('\u200e ')) == 2:
                             attrs_val2.append(' '.join(val2_temp.split('\u200e')[:-1]).lower())
                         else:
@@ -139,11 +136,6 @@ def get_mw_data(ms_name: str):
                     else:
                         attrs_val2.append(value.getText().lower())
                     # attrs_val2 = [''.join(value.getText().split())]
-                """for i in test:
-                    if len(i.split('\u200e ')) == 2:
-                        new.append(' '.join(i.split('\u200e')[:-1]).lower())
-                    else:
-                        new.append(' '.join(i.split(' ')[:-1]).lower())"""
             
             # # # # store attribute value
             value = attribute.find_all("div")[0]
@@ -205,6 +197,21 @@ for mw in mw_list:
 
 
 # Old/not functional stuff
+"""# val2_temp = ' '.join(value.getText().rsplit(' ', 1)[:-1])
+    # attrs_val2.append(' '.join(val2_temp.split('\u200e')[:-1]))"""
+
+
+"""for i in test:
+    if len(i.split('\u200e ')) == 2:
+        new.append(' '.join(i.split('\u200e')[:-1]).lower())
+    else:
+        new.append(' '.join(i.split(' ')[:-1]).lower())"""
+
+
+
+"""if value.find_all("span", {"class": "plainlinks"}):
+    attrs_val2 = [''.join(value.getText().split())]"""
+
 # Clean and store figures
 """if ' x ' in mw_data[dicts]:
             mw_data[dicts] = mw_data[dicts].split(" x ", 1)
