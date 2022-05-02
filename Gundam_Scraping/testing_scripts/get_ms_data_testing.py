@@ -67,7 +67,10 @@ def get_mw_data(mw_name: str):
     attrs_val.append(attrs_valname)
     
     # Clean and store type
+    # print(types)
     cleaned_type = [type.getText() for type in types]
+    # print(cleaned_type)
+    # print(len(cleaned_type[0].split(" ")))
     # # Add "type" to keys list
     attrs_key.append("type")
     # # Initialize value list for type
@@ -75,9 +78,13 @@ def get_mw_data(mw_name: str):
     # # Store main value for type
     attrs_valtype.append((cleaned_type[0].split(" ")[-2] + \
         " " + cleaned_type[0].split(" ")[-1]).lower())
+    # print(attrs_valtype)
     # # Store type qualifier value
-    attrs_valtype.append((' '.join(cleaned_type[0].\
-        split(" ")[:-2]).split("\t\t\t\t")[1]).lower())
+    if len(cleaned_type[0].split(" ")) > 2:
+        attrs_valtype.append((' '.join(cleaned_type[0].\
+            split(" ")[:-2]).split("\t\t\t\t")[1]).lower())
+    else:
+        attrs_valtype[0] = attrs_valtype[0].split("\t\t\t\t")[1]
     # # Add list of type values to values list
     attrs_val.append(attrs_valtype)
 
@@ -152,14 +159,22 @@ def get_mw_data(mw_name: str):
     
     # Clean measurements and armament numbers
     # # List of measurement words (used later)
-    measures = ['Height', 'Weight', 'Output', \
+    measures = ['RocketThrusters', 'MassRation', 'Height', 'Weight', 'Output', \
         'Length', 'Width', 'Range', 'Acceleration', 'Speed']
     # # Separate measurements from units, armament numbers from armament
     for dicts in mw_data:
         # # # Separate measurements from untis
         if any(ele in dicts for ele in measures):
-            mw_data[dicts] = mw_data[dicts][0].split(" ", 1)
-            mw_data[dicts][0] = float(mw_data[dicts][0])
+            """mw_data[dicts] = mw_data[dicts][0].split(" ", 1)
+            mw_data[dicts][0] = float(mw_data[dicts][0])"""
+            nums = []
+            mes = []
+            for eles in mw_data[dicts]:
+                """print(eles)
+                print(eles.split(" ", 1))"""
+                nums.append(float(eles.split(" ", 1)[0]))
+                mes.append(eles.split(" ", 1)[1])
+            mw_data[dicts] = [nums, mes]
         # # # Separate armaments from armament numbers
         if 'Armament' in dicts:
             arms = []
@@ -178,7 +193,7 @@ def get_mw_data(mw_name: str):
 
     return mw_data
 
-mw_data0 = get_mw_data(mw_list[16])
+mw_data0 = get_mw_data(mw_list[1])
 
 # print("\n".join(mw_data0))
 
