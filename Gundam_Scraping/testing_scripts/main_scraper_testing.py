@@ -1,8 +1,13 @@
 import json
 from os import mkdir
+import sys
+import traceback
+import timeit
 
 from get_ms_list_testing import get_mw_list
 from get_ms_data_testing import get_mw_data
+
+start = timeit.default_timer()
 
 mw_list = get_mw_list()
 
@@ -33,17 +38,26 @@ except FileExistsError:
 
 # Get the data for each mw
 total_mw_data = {}
+total_mw_errors = {}
 for mw in mw_list:
 
     # mw_local_name = mw.replace("/wiki/",  "")
 
     print("Getting data on", mw + "...", end="")
-    mw_data = get_mw_data(mw)
+    try:
+        mw_data = get_mw_data(mw)
+        total_mw_data[mw] = mw_data
+    except:
+        mw_data = [traceback.format_exc()]
+        total_mw_errors[mw] = mw_data
     print("Done")
 
-    total_mw_data[mw] = mw_data
-
-print("\nSaving villager JSON data...")
+print("\nSaving mw JSON data...")
 with open("Data/testing/mw_data/mw_data.json", "w") as mw_data_file:
     json.dump(total_mw_data, mw_data_file, indent=4)
+with open("Data/testing/mw_data/mw_errors.json", "w") as total_mw_errors_file:
+    json.dump(total_mw_errors, total_mw_errors_file, indent=4)
 print("Done")
+
+stop = timeit.default_timer()
+print ('Time: ', stop - start)
