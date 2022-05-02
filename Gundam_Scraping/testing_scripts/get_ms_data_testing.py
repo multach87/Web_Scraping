@@ -5,6 +5,8 @@ import re
 from requests import get
 from bs4 import BeautifulSoup
 from urllib import request
+import sys
+import traceback
 
 from get_ms_list_testing import get_mw_list
 
@@ -58,33 +60,51 @@ def get_mw_data(mw_name: str):
     attrs_valname = []
     # # Store english name
     # # Check for japanese name and add to names value list
-    if len(cleaned_names[0].split(" (")) > 1:
-        attrs_valname.append(cleaned_names[0].split(" (")[0])
-        attrs_valname.append(cleaned_names[0].split(" (")[1].split(")")[0])
-    else:
-        attrs_valname.append(cleaned_names[0])
+    try:    
+        if len(cleaned_names[0].split(" (")) > 1:
+            attrs_valname.append(cleaned_names[0].split(" (")[0])
+            attrs_valname.append(cleaned_names[0].split(" (")[1].split(")")[0])
+        else:
+            attrs_valname.append(cleaned_names[0])
+    except:
+        return None
+        sys.exit(1)
     # # Add list of name values to values list
     attrs_val.append(attrs_valname)
     
     # Clean and store type
     # print(types)
     cleaned_type = [type.getText() for type in types]
-    # print(cleaned_type)
-    # print(len(cleaned_type[0].split(" ")))
+    #print(cleaned_type)
+    cleaned_type[0] = cleaned_type[0].strip().strip("\t")
+    #print(cleaned_type)
+    #print(len(cleaned_type[0].split(" ")))
+    #print(cleaned_type[0].split(" ")[-1].lower())
+    #print(' '.join(cleaned_type[0].split(" ")[:-1]))
+    #print(cleaned_type[0].strip().strip("\t"))
     # # Add "type" to keys list
     attrs_key.append("type")
     # # Initialize value list for type
     attrs_valtype = []
     # # Store main value for type
-    attrs_valtype.append((cleaned_type[0].split(" ")[-2] + \
-        " " + cleaned_type[0].split(" ")[-1]).lower())
+    if len(cleaned_type[0].split(" ")) == 1:
+        #attrs_valtype.append(cleaned_type[0].split("\t\t\t\t")[1])
+        attrs_valtype.append(cleaned_type[0])
+    elif "ship" in cleaned_type[0]:
+        attrs_valtype = [cleaned_type[0].split(" ")[-1].lower(), \
+            ' '.join(cleaned_type[0].split(" ")[:-1]).lower()]
+        """attrs_valtype.append(' '.join(cleaned_type[0].split(" ")[:-1]) + \
+        " " + cleaned_type[0].split(" ")[-1].lower())"""
+    else:
+        attrs_valtype = [' '.join(cleaned_type[0].split(" ")[-2:]).lower(), \
+            ' '.join(cleaned_type[0].split(" ")[:-2]).lower()]
+        """attrs_valtype.append(cleaned_type[0].split(" ")[-2] + \
+        " " + cleaned_type[0].split(" ")[-1].lower())"""
     # print(attrs_valtype)
     # # Store type qualifier value
-    if len(cleaned_type[0].split(" ")) > 2:
-        attrs_valtype.append((' '.join(cleaned_type[0].\
-            split(" ")[:-2]).split("\t\t\t\t")[1]).lower())
-    else:
-        attrs_valtype[0] = attrs_valtype[0].split("\t\t\t\t")[1]
+    """if len(cleaned_type[0].split(" ")) > 2:
+        attrs_valtype.append(' '.join(cleaned_type[0].\
+            split(" ")[:-2]).lower())"""
     # # Add list of type values to values list
     attrs_val.append(attrs_valtype)
 
@@ -123,12 +143,16 @@ def get_mw_data(mw_name: str):
         for attribute in sections.find_all("div", {"class": \
             "pi-item pi-data pi-item-spacing pi-border-color"}):
             
+            # print(attribute)
             # # # # initialize values list for attributes with multiple values
             attrs_val2 = []
 
             # # # # store attribute name/key
-            key = ''.join(h2.split(" ")) + "_" + \
-                ''.join(attribute.find_all("h3")[0].getText().split(" "))
+            if(attribute.find_all("h3")):
+                key = ''.join(h2.split(" ")) + "_" + \
+                    ''.join(attribute.find_all("h3")[0].getText().split(" "))
+            else:
+                key = "MobileWeapons"
 
             # # # # for handling Overall Height in multiple measurement units
             # # # # # AND trailing spaces/"\u200e" 's
@@ -172,8 +196,12 @@ def get_mw_data(mw_name: str):
             for eles in mw_data[dicts]:
                 """print(eles)
                 print(eles.split(" ", 1))"""
-                nums.append(float(eles.split(" ", 1)[0]))
-                mes.append(eles.split(" ", 1)[1])
+                try:
+                    nums.append(float(eles.split(" ", 1)[0]))
+                    mes.append(eles.split(" ", 1)[1])
+                except:
+                    nums.append(eles.split(" ", 1)[0])
+                    mes.append(eles.split(" ", 1)[1])
             mw_data[dicts] = [nums, mes]
         # # # Separate armaments from armament numbers
         if 'Armament' in dicts:
@@ -193,11 +221,26 @@ def get_mw_data(mw_name: str):
 
     return mw_data
 
-mw_data0 = get_mw_data(mw_list[1])
+# mw_data0 = get_mw_data("/wiki/ACA-01_Gaw")
+# mw_data0 = get_mw_data("/wiki/OZ_Shuttle")
+# mw_data0 = get_mw_data("/wiki/ORX-009_Gundam_%EF%BC%BBSk%C3%B6ll%EF%BC%BD")
+# mw_data0 = get_mw_data("/wiki/AMA-01X_Jamru_Fin")
+# mw_data0 = get_mw_data("/wiki/AMS-119_Jagd_Geara_Doga")
+#mw_data0 = get_mw_data("/wiki/Amalthea-class")
+#mw_data0 = get_mw_data("/wiki/OZ-00MS_Tallgeese")
+#mw_data0 = get_mw_data("/wiki/ACA-01_Gaw")
+#mw_data0 = get_mw_data("/wiki/LMSD-76_Gray_Phantom")
+#mw_data0 = get_mw_data("/wiki/Ra_Cailum")
+#print(mw_data0)
 
-# print("\n".join(mw_data0))
+"""try:
+    mw_data0 = get_mw_data("/wiki/Zamouth_Giri-class")
+except:
+    mw_data0 = [traceback.format_exc()]"""
+#mw_data0 = get_mw_data("/wiki/Zamouth_Giri-class")
+#print(mw_data0)
 
-print(mw_data0)
+
 
 
 
@@ -215,6 +258,13 @@ for mw in mw_list:
 
 
 # Old/not functional stuff
+"""elif len(cleaned_type[0].split(" ")) == 2:
+    attrs_valtype[0] = attrs_valtype[0].split("\t\t\t\t")[1]"""
+
+
+"""attrs_valtype.append((' '.join(cleaned_type[0].\
+            split(" ")[:-2]).split("\t\t\t\t")[1]).lower())"""
+
 """# val2_temp = ' '.join(value.getText().rsplit(' ', 1)[:-1])
     # attrs_val2.append(' '.join(val2_temp.split('\u200e')[:-1]))"""
 
