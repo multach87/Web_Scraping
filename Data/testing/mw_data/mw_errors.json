@@ -1,0 +1,38 @@
+{
+    "/wiki/ArstFaige": [
+        "line 79, in get_mw_data\n    cleaned_type[0] = cleaned_type[0].strip().strip(\"\\t\")\nIndexError: list index out of range\n"
+    ],
+    "/wiki/Gigantis": [
+        "Traceback (most recent call last):line 200, in get_mw_data\n    nums.append(float(eles.split(\" \", 1)[0]))\nValueError: could not convert string to float: '\u221e'\n\nDuring handling of the above exception, another exception occurred:\n\nline 204, in get_mw_data\n    mes.append(eles.split(\" \", 1)[1])\nIndexError: list index out of range\n"
+    ],
+    "/wiki/Concept:Mobile_Weapons_-_Advanced_Generation_Mobile_Weapons": [
+        "line 43, in get_mw_data\n    aside = soup_response.findAll(\"aside\")[0]\nIndexError: list index out of range\n"
+    ],
+    "/wiki/Concept:Mobile_Weapons_-_After_Colony_Mobile_Weapons": [
+        "line 43, in get_mw_data\n    aside = soup_response.findAll(\"aside\")[0]\nIndexError: list index out of range\n"
+    ],
+    "/wiki/Concept:Mobile_Weapons_-_After_War_Mobile_Weapons": [
+        "line 43, in get_mw_data\n    aside = soup_response.findAll(\"aside\")[0]\nIndexError: list index out of range\n"
+    ],
+    "/wiki/Concept:Mobile_Weapons_-_Anno_Domini_Mobile_Weapons": [
+        "line 43, in get_mw_data\n    aside = soup_response.findAll(\"aside\")[0]\nIndexError: list index out of range\n"
+    ],
+    "/wiki/Concept:Mobile_Weapons_-_Correct_Century_Mobile_Weapons": [
+        "line 43, in get_mw_data\n    aside = soup_response.findAll(\"aside\")[0]\nIndexError: list index out of range\n"
+    ],
+    "/wiki/Concept:Mobile_Weapons_-_Cosmic_Era_Mobile_Weapons": [
+        "line 43, in get_mw_data\n    aside = soup_response.findAll(\"aside\")[0]\nIndexError: list index out of range\n"
+    ],
+    "/wiki/Concept:Mobile_Weapons_-_Future_Century_Mobile_Fighters": [
+        "line 43, in get_mw_data\n    aside = soup_response.findAll(\"aside\")[0]\nIndexError: list index out of range\n"
+    ],
+    "/wiki/Concept:Mobile_Weapons_-_Future_Century_Mobile_Weapons": [
+        "line 43, in get_mw_data\n    aside = soup_response.findAll(\"aside\")[0]\nIndexError: list index out of range\n"
+    ],
+    "/wiki/Concept:Mobile_Weapons_-_Universal_Century_Mobile_Weapons": [
+        "line 43, in get_mw_data\n    aside = soup_response.findAll(\"aside\")[0]\nIndexError: list index out of range\n"
+    ],
+    "https://static.wikia.nocookie.net/gundam/images/5/58/Tr-0.png/revision/latest?cb=20210520062754": [
+        "Traceback (most recent call last):\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/urllib3/connection.py\", line 175, in _new_conn\n    (self._dns_host, self.port), self.timeout, **extra_kw\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/urllib3/util/connection.py\", line 72, in create_connection\n    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/socket.py\", line 752, in getaddrinfo\n    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):\nsocket.gaierror: [Errno 8] nodename nor servname provided, or not known\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/urllib3/connectionpool.py\", line 710, in urlopen\n    chunked=chunked,\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/urllib3/connectionpool.py\", line 386, in _make_request\n    self._validate_conn(conn)\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/urllib3/connectionpool.py\", line 1040, in _validate_conn\n    conn.connect()\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/urllib3/connection.py\", line 358, in connect\n    self.sock = conn = self._new_conn()\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/urllib3/connection.py\", line 187, in _new_conn\n    self, \"Failed to establish a new connection: %s\" % e\nurllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPSConnection object at 0x1083babd0>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/requests/adapters.py\", line 450, in send\n    timeout=timeout\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/urllib3/connectionpool.py\", line 786, in urlopen\n    method, url, error=e, _pool=self, _stacktrace=sys.exc_info()[2]\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/urllib3/util/retry.py\", line 592, in increment\n    raise MaxRetryError(_pool, url, error or ResponseError(cause))\nurllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='gundam.fandom.comhttps', port=443): Max retries exceeded with url: //static.wikia.nocookie.net/gundam/images/5/58/Tr-0.png/revision/latest?cb=20210520062754 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x1083babd0>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))\n\nDuring handling of the above exception, another exception occurred:\n\nline 36, in get_mw_data\n    response = get(wiki_url + mw_name)\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/requests/api.py\", line 75, in get\n    return request('get', url, params=params, **kwargs)\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/requests/api.py\", line 61, in request\n    return session.request(method=method, url=url, **kwargs)\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/requests/sessions.py\", line 529, in request\n    resp = self.send(prep, **send_kwargs)\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/requests/sessions.py\", line 645, in send\n    r = adapter.send(request, **kwargs)\n  File \"/Users/Matt/opt/anaconda3/envs/webscrap/lib/python3.7/site-packages/requests/adapters.py\", line 519, in send\n    raise ConnectionError(e, request=request)\nrequests.exceptions.ConnectionError: HTTPSConnectionPool(host='gundam.fandom.comhttps', port=443): Max retries exceeded with url: //static.wikia.nocookie.net/gundam/images/5/58/Tr-0.png/revision/latest?cb=20210520062754 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x1083babd0>: Failed to establish a new connection: [Errno 8] nodename nor servname provided, or not known'))\n"
+    ]
+}
