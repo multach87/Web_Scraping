@@ -12,10 +12,10 @@ mw_list = get_mw_list()
 
 wiki_url = "https://gundam.fandom.com"
 
-def get_mw_data(ms_name: str):
+def get_mw_data(mw_name: str):
     """
     Scrape all the data for a given mw from the Gundam Fandom wiki.
-    :param ms_name: the url-ized version of the mw name, \
+    :param mw_name: the url-ized version of the mw name, \
         e.g., GX-9900-DV_Gundam_X_Divider
     :return: A dictionary of all the data scraped for the respective ms\
         -All attributes are pre-pended with "SectionHeader_"
@@ -31,7 +31,7 @@ def get_mw_data(ms_name: str):
     """
 
     # Get the page and parse it with BeautifulSoup
-    response = get(wiki_url + ms_name)
+    response = get(wiki_url + mw_name)
     soup_response = BeautifulSoup(response.text, 'html.parser')
 
     # Will store the data as a dictionary and write it as JSON later
@@ -46,8 +46,9 @@ def get_mw_data(ms_name: str):
 
     # Get names and types for mw (i.e., the single-item sections)
     names = aside.find_all("h2", {"class": \
-        "pi-item pi-item-spacing pi-title pi-secondary-background"})
+        "pi-item pi-item-spacing pi-title pi-secondary-background"})[1:]
     types = aside.find_all("td")
+    # print(names)
 
     # Clean and store name
     cleaned_names = [name.getText() for name in names]
@@ -56,10 +57,12 @@ def get_mw_data(ms_name: str):
     # # Initialize value list for names
     attrs_valname = []
     # # Store english name
-    attrs_valname.append(cleaned_names[0].lower())
     # # Check for japanese name and add to names value list
-    if(len(cleaned_names) > 1):
-        attrs_valname.append(cleaned_names[1].split(" (")[1].split(")")[0])
+    if len(cleaned_names[0].split(" (")) > 1:
+        attrs_valname.append(cleaned_names[0].split(" (")[0])
+        attrs_valname.append(cleaned_names[0].split(" (")[1].split(")")[0])
+    else:
+        attrs_valname.append(cleaned_names[0])
     # # Add list of name values to values list
     attrs_val.append(attrs_valname)
     
@@ -175,7 +178,7 @@ def get_mw_data(ms_name: str):
 
     return mw_data
 
-mw_data0 = get_mw_data(mw_list[12])
+mw_data0 = get_mw_data(mw_list[16])
 
 # print("\n".join(mw_data0))
 
