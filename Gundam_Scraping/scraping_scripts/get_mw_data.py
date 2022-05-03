@@ -2,9 +2,10 @@ from requests import get
 from bs4 import BeautifulSoup
 import sys
 
-from get_mw_list import get_mw_list
+from scraping_scripts.get_mw_list import get_list
+wiki_url = "https://gundam.fandom.com"
 
-def get_mw_data(mw_name: str):
+def get_data(mw_name: str):
     """
     Scrape all the data for a given mw from the Gundam Fandom wiki.
     :param mw_name: the url-ized version of the mw name, \
@@ -204,16 +205,16 @@ def get_mw_data(mw_name: str):
 
 # For testing
 if __name__ == "__main__":
-    mw_list = get_mw_list()
-    wiki_url = "https://gundam.fandom.com"
-    # mw_data0 = get_mw_data("/wiki/ACA-01_Gaw")
-    # mw_data0 = get_mw_data("/wiki/OZ_Shuttle")
-    # mw_data0 = get_mw_data("/wiki/ORX-009_Gundam_%EF%BC%BBSk%C3%B6ll%EF%BC%BD")
-    #mw_data0 = get_mw_data("/wiki/AMA-01X_Jamru_Fin")
-    # mw_data0 = get_mw_data("/wiki/AMS-119_Jagd_Geara_Doga")
-    #mw_data0 = get_mw_data("/wiki/Amalthea-class")
-    #mw_data0 = get_mw_data("/wiki/OZ-00MS_Tallgeese")
-    #mw_data0 = get_mw_data("/wiki/ACA-01_Gaw")
-    #mw_data0 = get_mw_data("/wiki/LMSD-76_Gray_Phantom")
-    mw_data0 = get_mw_data("/wiki/Ra_Cailum")
+    #from get_mw_list import get_list
+    
+    # mw_data0 = get_data("/wiki/ACA-01_Gaw")
+    # mw_data0 = get_data("/wiki/OZ_Shuttle")
+    # mw_data0 = get_data("/wiki/ORX-009_Gundam_%EF%BC%BBSk%C3%B6ll%EF%BC%BD")
+    #mw_data0 = get_data("/wiki/AMA-01X_Jamru_Fin")
+    # mw_data0 = get_data("/wiki/AMS-119_Jagd_Geara_Doga")
+    #mw_data0 = get_data("/wiki/Amalthea-class")
+    #mw_data0 = get_data("/wiki/OZ-00MS_Tallgeese")
+    #mw_data0 = get_data("/wiki/ACA-01_Gaw")
+    #mw_data0 = get_data("/wiki/LMSD-76_Gray_Phantom")
+    mw_data0 = get_data("/wiki/Ra_Cailum")
     print(mw_data0)
