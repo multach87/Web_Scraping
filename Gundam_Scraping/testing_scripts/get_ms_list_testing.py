@@ -31,17 +31,9 @@ def get_mw_list():
             mw_links.append(l)
     """
 
-# mw_list = get_mw_list()
-
-# print(len(mw_list))
 
 
 
-"""Stuff below to verify proper operation"""
-# check that numbers match up: 3240 vs 3243
-# All Account For!
-# # "RB-133 Ball Model 133" --> shows up twice
-# # "RX-78 Gundam series" --> shows up twice
-# # Weird Pale Rider image one
-# print(ms_links)
-# print(len(ms_links))
+if __name__ == "__main__":
+    mw_list = get_mw_list()
+    print(len(mw_list))

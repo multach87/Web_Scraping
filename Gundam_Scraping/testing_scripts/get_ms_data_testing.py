@@ -10,10 +10,6 @@ import traceback
 
 from get_ms_list_testing import get_mw_list
 
-mw_list = get_mw_list()
-
-wiki_url = "https://gundam.fandom.com"
-
 def get_mw_data(mw_name: str):
     """
     Scrape all the data for a given mw from the Gundam Fandom wiki.
@@ -221,18 +217,34 @@ def get_mw_data(mw_name: str):
 
     return mw_data
 
-# mw_data0 = get_mw_data("/wiki/ACA-01_Gaw")
-# mw_data0 = get_mw_data("/wiki/OZ_Shuttle")
-# mw_data0 = get_mw_data("/wiki/ORX-009_Gundam_%EF%BC%BBSk%C3%B6ll%EF%BC%BD")
-# mw_data0 = get_mw_data("/wiki/AMA-01X_Jamru_Fin")
-# mw_data0 = get_mw_data("/wiki/AMS-119_Jagd_Geara_Doga")
-#mw_data0 = get_mw_data("/wiki/Amalthea-class")
-#mw_data0 = get_mw_data("/wiki/OZ-00MS_Tallgeese")
-#mw_data0 = get_mw_data("/wiki/ACA-01_Gaw")
-#mw_data0 = get_mw_data("/wiki/LMSD-76_Gray_Phantom")
-#mw_data0 = get_mw_data("/wiki/Ra_Cailum")
-#print(mw_data0)
 
+if __name__ == "__main__":
+    mw_list = get_mw_list()
+    wiki_url = "https://gundam.fandom.com"
+    # mw_data0 = get_mw_data("/wiki/ACA-01_Gaw")
+    # mw_data0 = get_mw_data("/wiki/OZ_Shuttle")
+    # mw_data0 = get_mw_data("/wiki/ORX-009_Gundam_%EF%BC%BBSk%C3%B6ll%EF%BC%BD")
+    mw_data0 = get_mw_data("/wiki/AMA-01X_Jamru_Fin")
+    # mw_data0 = get_mw_data("/wiki/AMS-119_Jagd_Geara_Doga")
+    #mw_data0 = get_mw_data("/wiki/Amalthea-class")
+    #mw_data0 = get_mw_data("/wiki/OZ-00MS_Tallgeese")
+    #mw_data0 = get_mw_data("/wiki/ACA-01_Gaw")
+    #mw_data0 = get_mw_data("/wiki/LMSD-76_Gray_Phantom")
+    #mw_data0 = get_mw_data("/wiki/Ra_Cailum")
+    print(mw_data0)
+
+
+
+
+
+
+
+
+
+
+
+
+# Old/not functional stuff
 """try:
     mw_data0 = get_mw_data("/wiki/Zamouth_Giri-class")
 except:
@@ -240,24 +252,6 @@ except:
 #mw_data0 = get_mw_data("/wiki/Zamouth_Giri-class")
 #print(mw_data0)
 
-
-
-
-
-
-"""
-total_mw_data = {}
-for mw in mw_list:
-    print("Getting data on", mw.replace("/wiki/", "") + "...", end="")
-    mw_data = get_mw_data(mw)
-    print("Done")
-
-    total_mw_data[mw] = mw_data"""
-
-
-
-
-# Old/not functional stuff
 """elif len(cleaned_type[0].split(" ")) == 2:
     attrs_valtype[0] = attrs_valtype[0].split("\t\t\t\t")[1]"""
 
