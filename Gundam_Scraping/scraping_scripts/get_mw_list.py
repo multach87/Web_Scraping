@@ -25,3 +25,8 @@ def get_mw_list():
     
     # store the links
     return mw_links
+
+
+if __name__ == "__main__":
+    mw_list = get_mw_list()
+    print(len(mw_list))
