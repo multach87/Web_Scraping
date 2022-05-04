@@ -2,7 +2,10 @@ from requests import get
 from bs4 import BeautifulSoup
 import sys
 
-from scraping_scripts.get_mw_list import get_list
+try:
+    from scraping_scripts.get_mw_list import get_list
+except:
+    from get_mw_list import get_list
 wiki_url = "https://gundam.fandom.com"
 
 def get_data(mw_name: str):
@@ -187,8 +190,23 @@ def get_data(mw_name: str):
             # # Separate equipment and numbers
             for arm in mw_data[dicts]:
                 # # Handle multiples or weird "numbers" (e.g., '? x ')
+                if ' \u00d7 ' in arm:
+                    arm = ' x '.join(arm.split(" \u00d7 "))
+
                 if ' x ' in arm:
-                    arms.append(arm.split(" x ", 1)[1])
+                    if (len(arm.split(" x ", 1)[1].split(" (")) > 1) and \
+                        (" x " in arm.split(" x ", 1)[1].split(" (")):
+                        arms.append(arm.split(" x ", 1)[1].split(" (")[1].\
+                            strip(")").split(" x ", 1)[1])
+                        arms.append(arm.split(" x ", 1)[1].split(" (", 1)[0])
+                        try:
+                            nums.append(int(arm.split(" x ", 1)[1].split(" (")[1].\
+                                strip(")").split(" x ", 1)[0]))
+                        except:
+                            nums.append(arm.split(" x ", 1)[1].split(" (")[1].strip(")").split(" x ", 1)[0])
+                    else:
+                        arms.append(arm.split(" x ", 1)[1])
+                    
                     try:
                         nums.append(int(arm.split(" x ", 1)[0]))
                     except:
@@ -216,5 +234,7 @@ if __name__ == "__main__":
     #mw_data0 = get_data("/wiki/OZ-00MS_Tallgeese")
     #mw_data0 = get_data("/wiki/ACA-01_Gaw")
     #mw_data0 = get_data("/wiki/LMSD-76_Gray_Phantom")
-    mw_data0 = get_data("/wiki/Ra_Cailum")
+    #mw_data0 = get_data("/wiki/Ra_Cailum")
+    #mw_data0 = get_data("/wiki/RX-78-2_Gundam")
+    mw_data0 = get_data("/wiki/A/FMSZ-007II_Zeta")
     print(mw_data0)
