@@ -122,7 +122,7 @@ def get_data(mw_name: str):
 
     mw_data = dict(zip(attrs_key, attrs_val))
 
-    measures = ['MassRation', 'Height', 'Weight', 'Output', \
+    measures = ['MassRatio', 'Height', 'Weight', 'Output', \
         'Length', 'Width', 'Range', 'Acceleration', 'Speed', 'TurningTime']
 
     for key in list(mw_data.keys())[4:]:
@@ -143,6 +143,14 @@ def get_data(mw_name: str):
             if ' x ' in i \
                 else i \
                     for i in mw_data[key]]
+        mw_data[key] = [i.split('\u200e ', 1)[0] \
+            if '\u200e ' in i \
+                else i \
+                    for i in mw_data[key]]
+        if any(ele in key for ele in measures):
+            mw_data[key] = [i.split(' ', 1) for i in mw_data[key]]
+        """if 'StandardArmaments' in key:
+            mw_data[key]"""
 
     ### TESTING STARTS HERE
 
@@ -300,9 +308,9 @@ def get_data(mw_name: str):
 if __name__ == "__main__":
     #from get_mw_list import get_list
     
-    # mw_data0 = get_data("/wiki/ACA-01_Gaw")
-    # mw_data0 = get_data("/wiki/OZ_Shuttle")
-    #mw_data0 = get_data("/wiki/ORX-009_Gundam_%EF%BC%BBSk%C3%B6ll%EF%BC%BD")
+    #mw_data0 = get_data("/wiki/ACA-01_Gaw")
+    #mw_data0 = get_data("/wiki/OZ_Shuttle")
+    mw_data0 = get_data("/wiki/ORX-009_Gundam_%EF%BC%BBSk%C3%B6ll%EF%BC%BD")
     #mw_data0 = get_data("/wiki/AMA-01X_Jamru_Fin")
     #mw_data0 = get_data("/wiki/AMS-119_Jagd_Geara_Doga")
     #mw_data0 = get_data("/wiki/Amalthea-class")
@@ -310,7 +318,7 @@ if __name__ == "__main__":
     #mw_data0 = get_data("/wiki/ACA-01_Gaw")
     #mw_data0 = get_data("/wiki/LMSD-76_Gray_Phantom")
     #mw_data0 = get_data("/wiki/Ra_Cailum")
-    mw_data0 = get_data("/wiki/RX-78-2_Gundam")
+    #mw_data0 = get_data("/wiki/RX-78-2_Gundam")
     #mw_data0 = get_data("/wiki/A/FMSZ-007II_Zeta")
     print(mw_data0)
 
