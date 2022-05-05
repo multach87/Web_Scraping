@@ -112,7 +112,7 @@ def get_data(mw_name: str):
         h2_temp = sect.find("h2", \
             {"class": "pi-item pi-header pi-secondary-font pi-item-spacing pi-secondary-background"})\
                 .getText()
-        [attrs_key.append(''.join((h2_temp + "_" + h3_temp.getText()).split(" ")).lower()) \
+        [attrs_key.append(''.join((h2_temp + "_" + h3_temp.getText()).split(" "))) \
             for h3_temp in sect.findAll("h3")]
 
     for div in aside.findAll("div", {"class": "pi-data-value pi-font"}):
@@ -121,6 +121,35 @@ def get_data(mw_name: str):
         attrs_val.append(lis)
 
     mw_data = dict(zip(attrs_key, attrs_val))
+
+    measures = ['MassRation', 'Height', 'Weight', 'Output', \
+        'Length', 'Width', 'Range', 'Acceleration', 'Speed', 'TurningTime']
+
+    for key in list(mw_data.keys())[4:]:
+        #if any(ele in key for ele in measures):
+        mw_data[key] = [i.split(' <br />', 1)[0] \
+            if ' <br />' in i \
+                else i \
+                    for i in mw_data[key]]
+        mw_data[key] = [i.split(u'\xa0', 1)[0].rstrip(",1234567890.") \
+            if u'\xa0' in i \
+                else i \
+                    for i in mw_data[key]]
+        mw_data[key] = [i.split(' \u00d7 ', 1) \
+            if ' \u00d7 ' in i \
+                else i \
+                    for i in mw_data[key]]
+        mw_data[key] = [i.split(' x ', 1) \
+            if ' x ' in i \
+                else i \
+                    for i in mw_data[key]]
+
+    ### TESTING STARTS HERE
+
+    """for key in list(mw_data.keys())[4:]:
+        if any(ele in key for ele in measures):
+            mw_data[]"""
+
     """# Clean and store the attribute data
     # # Loop over all mw attribute sections except first
     # # # (which is covered in the "type" section)
@@ -281,8 +310,8 @@ if __name__ == "__main__":
     #mw_data0 = get_data("/wiki/ACA-01_Gaw")
     #mw_data0 = get_data("/wiki/LMSD-76_Gray_Phantom")
     #mw_data0 = get_data("/wiki/Ra_Cailum")
-    #mw_data0 = get_data("/wiki/RX-78-2_Gundam")
-    mw_data0 = get_data("/wiki/A/FMSZ-007II_Zeta")
+    mw_data0 = get_data("/wiki/RX-78-2_Gundam")
+    #mw_data0 = get_data("/wiki/A/FMSZ-007II_Zeta")
     print(mw_data0)
 
 
