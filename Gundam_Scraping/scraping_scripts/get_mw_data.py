@@ -48,45 +48,48 @@ def get_data(mw_name: str):
     # Clean and store name
     cleaned_names = [name.getText() for name in names]
     # # Add "name" to keys list
-    attrs_key.append("names")
+    attrs_key.append("name_en")
+    attrs_key.append("name_jp")
     # # Initialize value list for names
-    attrs_valname = []
+    #attrs_valname = []
     # # Check for MultipleNames/OneName/NoBox
     try:    
         # Store English and Japanese names if parentheses split
         if len(cleaned_names[0].split(" (")) > 1:
-            attrs_valname.append(cleaned_names[0].split(" (")[0])
-            attrs_valname.append(cleaned_names[0].split(" (")[1].split(")")[0])
+            attrs_val.append(cleaned_names[0].split(" (")[0].strip("\uff3d"))
+            attrs_val.append(cleaned_names[0].split(" (")[1].split(")")[0].strip("\uff3d"))
         # Otherwise just store English
         else:
-            attrs_valname.append(cleaned_names[0])
+            attrs_val.append(cleaned_names[0].strip("\uff3d"))
+            attrs_val.append(None)
     except:
         # Store None to full MW entry if no attribute box and Exit
         return None
         sys.exit(1)
     # # Add list of names to values list
-    attrs_val.append(attrs_valname)
+    #attrs_val.append(attrs_valname)
     
     # Clean and store type
     cleaned_type = [type.getText() for type in types]
     # # Strip end spaces and tabs
     cleaned_type[0] = cleaned_type[0].strip().strip("\t")
     # # Add "type" to keys list
-    attrs_key.append("type")
+    attrs_key.append("type_main")
+    attrs_key.append("type_details")
     # # Initialize value list for type
-    attrs_valtype = []
+    #attrs_valtype = []
     # # Check for type characteristics to handle: 
     # # # 1 type, ships, or all others
     if len(cleaned_type[0].split(" ")) == 1:
-        attrs_valtype.append(cleaned_type[0])
+        attrs_val.append(cleaned_type[0])
     elif "ship" in cleaned_type[0]:
-        attrs_valtype = [cleaned_type[0].split(" ")[-1].lower(), \
-            ' '.join(cleaned_type[0].split(" ")[:-1]).lower()]
+        attrs_val.append(cleaned_type[0].split(" ")[-1].lower())
+        attrs_val.append(' '.join(cleaned_type[0].split(" ")[:-1]).lower())
     else:
-        attrs_valtype = [' '.join(cleaned_type[0].split(" ")[-2:]).lower(), \
-            ' '.join(cleaned_type[0].split(" ")[:-2]).lower()]
+        attrs_val.append(' '.join(cleaned_type[0].split(" ")[-2:]).lower())
+        attrs_val.append(' '.join(cleaned_type[0].split(" ")[:-2]).lower())
     # # Add list of type values to values list
-    attrs_val.append(attrs_valtype)
+    #attrs_val.append(attrs_val)
 
     # Clean and store image urls, image captions
     if aside.find_all("a", {"class": \
@@ -128,11 +131,12 @@ def get_data(mw_name: str):
 
             # # store attribute name/key if contains h3's
             if(attribute.find_all("h3")):
-                key = ''.join(h2.split(" ")) + "_" + \
-                    ''.join(attribute.find_all("h3")[0].getText().split(" "))
+                attrs_key.append((''.join(h2.split(" ")) + "_" + \
+                    ''.join(attribute.find_all("h3")[0].getText().split(" "))))
             # # Otherwise it's the Mobile Weapons section for ships/carriers
             else:
-                key = "MobileWeapons"
+                attrs_key.append("MobileWeapons")
+            #print(attrs_key)
 
             # # handles some problem cases: multi-measures, '\u200e'
             for value in attribute.find_all("li"):
@@ -154,9 +158,12 @@ def get_data(mw_name: str):
                     # Otherwise just append the text
                     else:
                         attrs_val2.append(value.getText().lower())
+                #print(attrs_val2)
+
+                
             
             # # update keys and values
-            attrs_key.append(key)
+            #attrs_key.append(key)
             attrs_val.append(attrs_val2)
 
     # zip together attribute keys and values into dictionary
@@ -168,8 +175,13 @@ def get_data(mw_name: str):
         'Length', 'Width', 'Range', 'Acceleration', 'Speed']
     # # Separate measurements from units, armament numbers from armament
     for dicts in mw_data:
+        #print(dicts)
+        attrs_keynew = []
+        attrs_valnew = []
+        dict_equip = {}
         # Separate measurements from untis
         if any(ele in dicts for ele in measures):
+            keytop = dicts
             # # initialize numbers and units lists
             nums = []
             mes = []
@@ -181,8 +193,31 @@ def get_data(mw_name: str):
                 except:
                     nums.append(eles.split(" ", 1)[0])
                     mes.append(eles.split(" ", 1)[1])
+                """print(nums)
+                print(mes)
+                for i in range(len(nums)):
+                    newkey = [keytop, mes[i]]
+                    attrs_key.append('_'.join(newkey))
+                    attrs_val.append(nums[i])"""
+                #print(keytop)
+                #print(mes)
+                newkey = [keytop, mes[0]]
+                attrs_keynew.append('_'.join(newkey))
+                attrs_valnew.append(nums)
+                #print(newkey)
+                #print(nums)
+                #attrs_key.append('_'.join(newkey))
+                #attrs_val.append(nums)
+                #print(attrs_key)
+                """print(attrs_keynew)
+                print(attrs_valnew)"""
             # # Updates corresponding values in dictionary
             mw_data[dicts] = [nums, mes]
+            dict_equip.update(dict(zip(attrs_keynew, attrs_valnew)))
+            #print(dict_equip)
+            #mw_data.update(dict_equip)
+            #print(dict_equip)
+            #print(mw_data[dicts])
         # Separate armaments from armament numbers
         if 'Armament' in dicts:
             arms = []
@@ -195,7 +230,7 @@ def get_data(mw_name: str):
 
                 if ' x ' in arm:
                     if (len(arm.split(" x ", 1)[1].split(" (")) > 1) and \
-                        (" x " in arm.split(" x ", 1)[1].split(" (")):
+                        (" x " in arm.split(" x ", 1)[1].split(" (")[1]):
                         arms.append(arm.split(" x ", 1)[1].split(" (")[1].\
                             strip(")").split(" x ", 1)[1])
                         arms.append(arm.split(" x ", 1)[1].split(" (", 1)[0])
@@ -203,7 +238,8 @@ def get_data(mw_name: str):
                             nums.append(int(arm.split(" x ", 1)[1].split(" (")[1].\
                                 strip(")").split(" x ", 1)[0]))
                         except:
-                            nums.append(arm.split(" x ", 1)[1].split(" (")[1].strip(")").split(" x ", 1)[0])
+                            nums.append(arm.split(" x ", 1)[1].split(" (")[1].\
+                                strip(")").split(" x ", 1)[0])
                     else:
                         arms.append(arm.split(" x ", 1)[1])
                     
@@ -217,6 +253,8 @@ def get_data(mw_name: str):
                     nums.append(1)
             # # Updates corresponding values in dictionary
             mw_data[dicts] = [arms, nums]
+    print(dict_equip)
+    mw_data.update(dict_equip)
 
     # Save full dictionary
     return mw_data
@@ -227,14 +265,14 @@ if __name__ == "__main__":
     
     # mw_data0 = get_data("/wiki/ACA-01_Gaw")
     # mw_data0 = get_data("/wiki/OZ_Shuttle")
-    # mw_data0 = get_data("/wiki/ORX-009_Gundam_%EF%BC%BBSk%C3%B6ll%EF%BC%BD")
+    #mw_data0 = get_data("/wiki/ORX-009_Gundam_%EF%BC%BBSk%C3%B6ll%EF%BC%BD")
     #mw_data0 = get_data("/wiki/AMA-01X_Jamru_Fin")
-    # mw_data0 = get_data("/wiki/AMS-119_Jagd_Geara_Doga")
+    #mw_data0 = get_data("/wiki/AMS-119_Jagd_Geara_Doga")
     #mw_data0 = get_data("/wiki/Amalthea-class")
     #mw_data0 = get_data("/wiki/OZ-00MS_Tallgeese")
     #mw_data0 = get_data("/wiki/ACA-01_Gaw")
     #mw_data0 = get_data("/wiki/LMSD-76_Gray_Phantom")
     #mw_data0 = get_data("/wiki/Ra_Cailum")
-    #mw_data0 = get_data("/wiki/RX-78-2_Gundam")
-    mw_data0 = get_data("/wiki/A/FMSZ-007II_Zeta")
+    mw_data0 = get_data("/wiki/RX-78-2_Gundam")
+    #mw_data0 = get_data("/wiki/A/FMSZ-007II_Zeta")
     print(mw_data0)
