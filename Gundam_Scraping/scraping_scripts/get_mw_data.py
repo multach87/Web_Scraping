@@ -1,3 +1,4 @@
+from pickle import FALSE
 from requests import get
 from bs4 import BeautifulSoup
 import sys
@@ -41,9 +42,9 @@ def get_data(mw_name: str):
     attrs_val = []
 
     # Get names and types for mw (i.e., the single-item sections)
-    names = aside.find_all("h2", {"class": \
+    names = aside.findAll("h2", {"class": \
         "pi-item pi-item-spacing pi-title pi-secondary-background"})[1:]
-    types = aside.find_all("td")
+    types = aside.findAll("td")
 
     # Clean and store name
     cleaned_names = [name.getText() for name in names]
@@ -92,7 +93,7 @@ def get_data(mw_name: str):
     #attrs_val.append(attrs_val)
 
     # Clean and store image urls, image captions
-    if aside.find_all("a", {"class": \
+    if aside.findAll("a", {"class": \
         "image image-thumbnail"}):
         # # Add "imgs" to keys list
         attrs_key.append("imgs")
@@ -100,16 +101,27 @@ def get_data(mw_name: str):
         img_urls = []
         img_capts = []
         # # Append each link, caption to list
-        for link in aside.find_all("a", {"class": \
-            "image image-thumbnail"}):
-            l = link.get("href")
-            c = link.get("title")
-            img_urls.append(l)
-            img_capts.append(c)
+        [img_urls.append(link.get("href")) for link in aside.findAll("a", {"class": \
+            "image image-thumbnail"})]
+        [img_capts.append(link.get("title")) for link in aside.findAll("a", {"class": \
+            "image image-thumbnail"})]
         # # Add list of image urls and list of cpations to values list
         attrs_val.append([img_urls, img_capts])
 
-    # Clean and store the attribute data
+    for sect in aside.findAll("section")[1:]:
+        h2_temp = sect.find("h2", \
+            {"class": "pi-item pi-header pi-secondary-font pi-item-spacing pi-secondary-background"})\
+                .getText()
+        [attrs_key.append(''.join((h2_temp + "_" + h3_temp.getText()).split(" ")).lower()) \
+            for h3_temp in sect.findAll("h3")]
+
+    for div in aside.findAll("div", {"class": "pi-data-value pi-font"}):
+        lis = []
+        [lis.append(li.getText().lower()) for li in div.findAll("li")]
+        attrs_val.append(lis)
+
+    mw_data = dict(zip(attrs_key, attrs_val))
+    """# Clean and store the attribute data
     # # Loop over all mw attribute sections except first
     # # # (which is covered in the "type" section)
     for sections in aside.findAll(["section", \
@@ -121,25 +133,24 @@ def get_data(mw_name: str):
         h2 = sections.findAll("h2", {"class": \
             "pi-item pi-header pi-secondary-font pi-item-spacing pi-secondary-background"})\
                 [0].getText()
-        
         # Loop over all items within each section
-        for attribute in sections.find_all("div", {"class": \
+        for attribute in sections.findAll("div", {"class": \
             "pi-item pi-data pi-item-spacing pi-border-color"}):
             
             # # initialize values list for attributes with multiple values
             attrs_val2 = []
 
             # # store attribute name/key if contains h3's
-            if(attribute.find_all("h3")):
+            if(attribute.findAll("h3")):
                 attrs_key.append((''.join(h2.split(" ")) + "_" + \
-                    ''.join(attribute.find_all("h3")[0].getText().split(" "))))
+                    ''.join(attribute.findAll("h3")[0].getText().split(" "))))
             # # Otherwise it's the Mobile Weapons section for ships/carriers
             else:
                 attrs_key.append("MobileWeapons")
             #print(attrs_key)
 
             # # handles some problem cases: multi-measures, '\u200e'
-            for value in attribute.find_all("li"):
+            for value in attribute.findAll("li"):
                 # This span/class corresponds with features with multiple
                 # # measurements (i.e., in both imperial and metric)
                 if value.findChildren("span", {"class": "smwtext"}):
@@ -147,7 +158,7 @@ def get_data(mw_name: str):
                         "smwtext"})[0].getText().lower())
                 else:
                     # Handles plainlinks cases, w/ and w/o '\u200e'
-                    if value.find_all("span", {"class": "plainlinks"}):
+                    if value.findAll("span", {"class": "plainlinks"}):
                         val2_temp = value.getText()
                         if len(val2_temp.split('\u200e ')) == 2:
                             attrs_val2.append(' '.\
@@ -166,22 +177,26 @@ def get_data(mw_name: str):
             #attrs_key.append(key)
             attrs_val.append(attrs_val2)
 
+
     # zip together attribute keys and values into dictionary
-    mw_data = dict(zip(attrs_key, attrs_val))
+    mw_data = dict(zip(attrs_key, attrs_val))"""
+    #mw_data = dict(zip(attrs_key, (x for x in attrs_val)))
+    #mw_data = [attrs_key, attrs_val]
+    #mw_data = dict(zip(mw_data["attrs_key"], mw_data["attrs_val"]))
     
-    # Clean measurements and armament numbers
+    """# Clean measurements and armament numbers
     # # List of measurement words
     measures = ['RocketThrusters', 'MassRation', 'Height', 'Weight', 'Output', \
-        'Length', 'Width', 'Range', 'Acceleration', 'Speed']
+        'Length', 'Width', 'Range', 'Acceleration', 'Speed', 'TurningTime']
     # # Separate measurements from units, armament numbers from armament
     for dicts in mw_data:
         #print(dicts)
-        attrs_keynew = []
-        attrs_valnew = []
-        dict_equip = {}
+        #attrs_keynew = []
+        #attrs_valnew = []
+        #dict_equip = {}
         # Separate measurements from untis
         if any(ele in dicts for ele in measures):
-            keytop = dicts
+            #keytop = dicts
             # # initialize numbers and units lists
             nums = []
             mes = []
@@ -193,27 +208,19 @@ def get_data(mw_name: str):
                 except:
                     nums.append(eles.split(" ", 1)[0])
                     mes.append(eles.split(" ", 1)[1])
-                """print(nums)
-                print(mes)
-                for i in range(len(nums)):
-                    newkey = [keytop, mes[i]]
-                    attrs_key.append('_'.join(newkey))
-                    attrs_val.append(nums[i])"""
                 #print(keytop)
                 #print(mes)
-                newkey = [keytop, mes[0]]
-                attrs_keynew.append('_'.join(newkey))
-                attrs_valnew.append(nums)
+                #newkey = [keytop, mes[0]]
+                #attrs_keynew.append('_'.join(newkey))
+                #attrs_valnew.append(nums)
                 #print(newkey)
                 #print(nums)
                 #attrs_key.append('_'.join(newkey))
                 #attrs_val.append(nums)
                 #print(attrs_key)
-                """print(attrs_keynew)
-                print(attrs_valnew)"""
             # # Updates corresponding values in dictionary
             mw_data[dicts] = [nums, mes]
-            dict_equip.update(dict(zip(attrs_keynew, attrs_valnew)))
+            #dict_equip.update(dict(zip(attrs_keynew, attrs_valnew)))
             #print(dict_equip)
             #mw_data.update(dict_equip)
             #print(dict_equip)
@@ -252,12 +259,13 @@ def get_data(mw_name: str):
                     arms.append(arm)
                     nums.append(1)
             # # Updates corresponding values in dictionary
-            mw_data[dicts] = [arms, nums]
-    print(dict_equip)
-    mw_data.update(dict_equip)
+            mw_data[dicts] = [arms, nums]"""
+    #print(dict_equip)
+    #mw_data.update(dict_equip)
 
     # Save full dictionary
     return mw_data
+    #print(attrs_key)
 
 # For testing
 if __name__ == "__main__":
@@ -273,6 +281,17 @@ if __name__ == "__main__":
     #mw_data0 = get_data("/wiki/ACA-01_Gaw")
     #mw_data0 = get_data("/wiki/LMSD-76_Gray_Phantom")
     #mw_data0 = get_data("/wiki/Ra_Cailum")
-    mw_data0 = get_data("/wiki/RX-78-2_Gundam")
-    #mw_data0 = get_data("/wiki/A/FMSZ-007II_Zeta")
+    #mw_data0 = get_data("/wiki/RX-78-2_Gundam")
+    mw_data0 = get_data("/wiki/A/FMSZ-007II_Zeta")
     print(mw_data0)
+
+
+# 
+    """print(nums)
+                    print(mes)
+                    for i in range(len(nums)):
+                        newkey = [keytop, mes[i]]
+                        attrs_key.append('_'.join(newkey))
+                        attrs_val.append(nums[i])"""
+"""print(attrs_keynew)
+                print(attrs_valnew)"""
