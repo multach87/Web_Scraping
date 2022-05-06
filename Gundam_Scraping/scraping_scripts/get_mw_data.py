@@ -310,7 +310,7 @@ if __name__ == "__main__":
     
     #mw_data0 = get_data("/wiki/ACA-01_Gaw")
     #mw_data0 = get_data("/wiki/OZ_Shuttle")
-    mw_data0 = get_data("/wiki/ORX-009_Gundam_%EF%BC%BBSk%C3%B6ll%EF%BC%BD")
+    #mw_data0 = get_data("/wiki/ORX-009_Gundam_%EF%BC%BBSk%C3%B6ll%EF%BC%BD")
     #mw_data0 = get_data("/wiki/AMA-01X_Jamru_Fin")
     #mw_data0 = get_data("/wiki/AMS-119_Jagd_Geara_Doga")
     #mw_data0 = get_data("/wiki/Amalthea-class")
@@ -318,17 +318,6 @@ if __name__ == "__main__":
     #mw_data0 = get_data("/wiki/ACA-01_Gaw")
     #mw_data0 = get_data("/wiki/LMSD-76_Gray_Phantom")
     #mw_data0 = get_data("/wiki/Ra_Cailum")
-    #mw_data0 = get_data("/wiki/RX-78-2_Gundam")
+    mw_data0 = get_data("/wiki/RX-78-2_Gundam")
     #mw_data0 = get_data("/wiki/A/FMSZ-007II_Zeta")
     print(mw_data0)
-
-
-# 
-    """print(nums)
-                    print(mes)
-                    for i in range(len(nums)):
-                        newkey = [keytop, mes[i]]
-                        attrs_key.append('_'.join(newkey))
-                        attrs_val.append(nums[i])"""
-"""print(attrs_keynew)
-                print(attrs_valnew)"""
