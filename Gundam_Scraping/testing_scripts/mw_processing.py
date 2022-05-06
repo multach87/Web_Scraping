@@ -70,6 +70,7 @@ if __name__ == "__main__":
 
     # for one-hot'ing shows specifically (since "first/last seen" is included \
     # but useless for our purposes)
+    # # NEED TO INCORPORATE OVAs
     """shows = []
     [shows.append(i.split(":")[0]) for i in data_1mw["RealWorld_Television"]]
     print(shows)"""
