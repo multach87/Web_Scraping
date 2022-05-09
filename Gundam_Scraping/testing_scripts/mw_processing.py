@@ -31,15 +31,12 @@ def one_hot(key_name: str):
     data_temp = pd.DataFrame.from_dict(data_1mw[key_name])
     key_temp = key_name.split("_" , 1)[1]
     data_temp = data_temp[0].str.get_dummies().add_prefix((key_temp + "_"))
-    data_temp.columns = data_temp.columns.str.replace(' ', '').str.replace('[', '_').str.replace(']', '').str.replace(':', '').str.replace('\'', '')
+    data_temp.columns = data_temp.columns.str.replace('-', '').str.replace(' ', '').\
+        str.replace('[', '_').str.replace(']', '').str.replace(':', '').\
+            str.replace('\'', '').str.replace('~', '').str.replace('.', '')
     data_temp = data_temp.drop(data_temp.index[1:])
     data_temp[0:] = 1
     return(data_temp)
-
-
-# vars
-"""data["RX-78-2_Gundam"]["names"][0]
-data["RX-78-2_Gundam"]["type"][0]"""
 
 if __name__ == "__main__":
     jfile = open('Data/mw_data/mw_data.json')
@@ -57,8 +54,9 @@ if __name__ == "__main__":
     ohn_main = ['name', 'type', 'imgs']
     ohn_eps = ['_Television', '_OVA']
     ohn_measures = ['MassRatio', 'Height', 'Weight', \
-        'Output', 'Length', 'Width', 'Range', 'Acceleration', 'Speed', 'TurningTime']
-    ohn_equiparms = ["Equipment", "Armaments", "RocketThrusters"]
+        'Output', 'Length', 'Width', 'Range', 'Acceleration', 'Speed']
+    ohn_equiparms = ['Equipment', 'Armaments']
+    ohn_exclude = ['TurningTime', 'RocketThrusters']
     """[print(key) for key in list(data_1mw.keys()) \
         if any(ele in key for ele in ohn_main + ohn_eps + ohn_measures + ohn_equiparms)]"""
     
@@ -69,19 +67,39 @@ if __name__ == "__main__":
         #print("2 levels!")"""
     
     # One-Hot encoding: non-name or equipment features DONE
-    """spec_key = []
+    spec_key = []
     [spec_key.append(key) for key in list(data_1mw.keys()) \
-        if any(ele in key for ele in ohn_main + ohn_eps + ohn_measures + ohn_equiparms)]
+        if any(ele in key for ele in \
+            ohn_main + ohn_eps + ohn_measures + ohn_equiparms + ohn_exclude)]
     onehot_main = np.setdiff1d(list(data_1mw.keys()), spec_key)
-    data_ready = [pd.concat([data_ready, one_hot(str(key))], axis = 1) for key in onehot_main]"""
+    for key in onehot_main:
+        data_ready = pd.concat([data_ready, one_hot(str(key))], axis = 1)
+    """data_ready = [pd.concat([data_ready, one_hot(str(key))], axis = 1) \
+        for key in onehot_main]"""
     #print(data_ready)
     #print(data_ready.columns)
 
-    # for one-hot'ing shows specifically (since "first/last seen" is included \
+    # for one-hot'ing shows/OVAs specifically (since "first/last seen" is included \
     # but useless for our purposes)
-    # # OVA INCORPORATED - ready TOBE Looped
-    """shows = []
-    [shows.append(i.split(":")[0]) for i in data_1mw["RealWorld_Television"]]
-    [shows.append(i.split(":")[0]) for i in data_1mw["RealWorld_OVA"] if "episode" in i]"""
-    #print(shows)    
+    # # LOOPED - Could refactoring onehot'ing into function later
+    shows = []
+    [shows.append(i.split(":")[0].replace('-', '').replace(' ', '').\
+        replace('[', '_').replace(']', '').replace('\'', '').replace('~', '').replace('.', '')) \
+            for i in data_1mw["RealWorld_Television"]]
+    [shows.append(i.split(":")[0].replace('-', '').replace(' ', '').\
+        replace('[', '_').replace(']', '').replace('\'', '').replace('~', '').replace('.', '')) \
+            if "episode" in i \
+                else shows.append(i.replace(':', '').replace('-', '').\
+                    replace(' ', '').replace('[', '_').replace(']', '').replace('\'', '').replace('~', '').replace('.', ''))
+            for i in data_1mw["RealWorld_OVA"]]
+    shows = pd.DataFrame(shows, columns = ['showsOVAs'])
+    shows = shows["showsOVAs"].str.get_dummies().add_prefix((shows.columns[0] + "_"))
+    shows[0:] = 1
+    shows = shows.drop(shows.index[1:])
+    #print(data_ready)
+    data_ready = pd.concat([data_ready, shows], axis = 1)
+    #print(shows)
+    #print(shows.columns)
+    print(data_ready.columns)
+    print(data_ready)
 
